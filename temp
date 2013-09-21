@@ -1,0 +1,42 @@
+/*
+ * test1.c
+ *
+ *  Created on: Sep 21, 2013
+ *      Author: David Hunt
+ */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <pthread.h>
+#include <assert.h>
+
+void * tFunc(void *param);
+
+int g = 0;
+
+int main(int argc, char ** argv)
+{
+	pthread_t tidA, tidB;
+	g = 1;
+	printf("prethreads [%d]\n", g);
+	pthread_create(&tidA, NULL, tFunc((void *)"threadA"), NULL);
+	pthread_create(&tidB, NULL, tFunc((void *)"threadB"), NULL);
+	printf("posttreads [%d]\n", g);
+	pthread_join(tidA, NULL);
+	pthread_join(tidB, NULL);
+	printf("main done [%d]\n", g);
+	return 0;
+}
+
+void * tFunc(void *param)
+{
+	int i;
+	char *str = (char*)param;
+	for(i = 0; i<3; i++)
+	{
+		printf("%s [%d:%d]\n", str, i, g);
+		g++;
+	}
+	pthread_exit(0);
+	return param;
+}
